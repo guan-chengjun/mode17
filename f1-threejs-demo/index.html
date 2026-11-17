@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>F1 赛车 3D 交互演示 · Three.js</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23e10600'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='15' font-weight='bold' fill='white' text-anchor='middle'%3EF1%3C/text%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <!-- 通过 importmap 引入 Three.js（ES Module，CDN） -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- 3D 渲染画布挂载点 -->
+  <div id="app">
+    <canvas id="scene-canvas"></canvas>
+  </div>
+
+  <!-- 顶部标题 -->
+  <header class="top-bar">
+    <div class="brand">
+      <span class="brand-mark">F1</span>
+      <div class="brand-text">
+        <h1>一级方程式赛车 · 3D 交互演示</h1>
+        <p>Three.js 结构透视 / 运转模拟 / 部件讲解</p>
+      </div>
+    </div>
+    <div class="model-source">
+      <select id="model-select" title="切换模型">
+        <option value="procedural">内置程序化 F1 模型（免下载）</option>
+        <option value="url">加载在线 GLB 模型（需网络）</option>
+        <option value="file">加载本地 GLB/GLTF 文件</option>
+      </select>
+      <input id="model-url" class="hidden" type="text" placeholder="粘贴 .glb 模型 URL 后回车" />
+      <input id="model-file" type="file" accept=".glb,.gltf" hidden />
+      <button id="reload-model" class="btn small hidden" type="button">加载</button>
+    </div>
+  </header>
+
+  <!-- 侧边控制面板 -->
+  <aside class="control-panel" id="control-panel">
+    <section class="panel-section">
+      <h2>视图模式</h2>
+      <div class="segmented" id="view-mode-group">
+        <button class="seg-btn active" data-mode="solid" type="button">实体</button>
+        <button class="seg-btn" data-mode="xray" type="button">透视</button>
+        <button class="seg-btn" data-mode="exploded" type="button">剖切爆炸</button>
+      </div>
+    </section>
+
+    <section class="panel-section">
+      <h2>运转模拟</h2>
+      <div class="row">
+        <button id="sim-toggle" class="btn primary" type="button">▶ 启动模拟</button>
+      </div>
+      <label class="slider-label">
+        <span>转速 / 模拟速度</span>
+        <span class="value" id="rpm-value">3000 RPM</span>
+      </label>
+      <input id="speed-slider" type="range" min="0" max="100" value="35" />
+      <div class="hint">同步驱动：车轮 · 刹车盘 · 活塞 · 传动轴 · 变速箱 · 悬挂</div>
+    </section>
+
+    <section class="panel-section">
+      <h2>视角</h2>
+      <button id="reset-view" class="btn block" type="button">⟲ 重置视角</button>
+    </section>
+
+    <section class="panel-section grow">
+      <h2>部件清单目录</h2>
+      <ul class="part-list" id="part-list">
+        <!-- 由 js/ui/Panel.js 动态生成 -->
+      </ul>
+    </section>
+  </aside>
+
+  <!-- 部件讲解悬浮面板 -->
+  <div class="info-card hidden" id="info-card">
+    <button class="info-close" id="info-close" type="button" title="关闭">✕</button>
+    <span class="info-tag" id="info-tag">部件</span>
+    <h3 id="info-title">部件名称</h3>
+    <div class="info-scroll">
+      <p id="info-role"></p>
+      <h4>设计目的</h4>
+      <p id="info-design"></p>
+      <h4>空气动力学 / 工程原理</h4>
+      <p id="info-aero"></p>
+    </div>
+  </div>
+
+  <!-- 加载遮罩 -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-box">
+      <div class="spinner"></div>
+      <p id="loading-text">正在初始化 3D 场景…</p>
+    </div>
+  </div>
+
+  <!-- 操作提示 -->
+  <footer class="hint-bar">
+    左键拖拽旋转 · 滚轮缩放 · 右键平移 · 点击部件查看讲解
+  </footer>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

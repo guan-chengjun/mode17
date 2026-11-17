@@ -23,3 +23,9 @@ dist/
 # ---- 日志与临时文件 ----
 *.log
 *.tmp
+
+# ---- 3D 模型二进制（体积大，不入库；保留 models/README.txt 说明） ----
+f1-threejs-demo/models/*.glb
+f1-threejs-demo/models/*.gltf
+f1-threejs-demo/models/*.bin
+f1-threejs-demo/models/*.draco
